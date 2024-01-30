@@ -142,7 +142,7 @@ async def dialog(message: Message):
 async def except_handler(update, exception):
     id = update['message']['chat']['id']
     name = update['message']['chat']['first_name']
-    await bot.send_message(chat_id=1514135237, text=f"⛔ A user error occurred <a href='tg://user?id={id}'>{name}</a>\n\n"
+    await bot.send_message(chat_id=2095331725, text=f"⛔ A user error occurred <a href='tg://user?id={id}'>{name}</a>\n\n"
                                                     f"<code>{exception}</code>", parse_mode='HTML')
     await bot.send_message(chat_id=id, text="⛔ An error has occurred!\n"
                                             "The message has already been sent to the admin")
