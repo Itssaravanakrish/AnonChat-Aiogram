@@ -18,51 +18,51 @@ async def start_handler(message: Message):
     user = await getUser(id)
     if user is None:
         await setUser(id)
-        await bot.send_message(admin, f'<b>🔔 Новый пользователь - <a href="tg://user?id={id}">{message.from_user.first_name}</a>!</b>')
-        await message.answer("<b>💻 Главное меню</b>", reply_markup=kb_menu)
+        await bot.send_message(admin, f'<b>🔔 New user - <a href="tg://user?id={id}">{message.from_user.first_name}</a>!</b>')
+        await message.answer("<b>💻 Main menu</b>", reply_markup=kb_menu)
     else:
         if user[2] == 'Нету':
-            await message.answer("<b>💻 Главное меню</b>", reply_markup=kb_menu)
+            await message.answer("<b>💻 Main menu</b>", reply_markup=kb_menu)
 
-@dp.message_handler(Text(equals='Поиск собеседника🔎'))
+@dp.message_handler(Text(equals='Search for an partner🔎'))
 async def choise_sex(message: Message):
     id = message.from_user.id
     user = await getUser(id)
     if user[1] == 'Не выбран':
         kb = InlineKeyboardMarkup(row_width=1)
-        kb.add(InlineKeyboardButton("Указать✏️", callback_data='edit_sex'))
-        await message.answer("⛔ Вы не указали свой пол", reply_markup=kb)
+        kb.add(InlineKeyboardButton("Specify✏️", callback_data='edit_sex'))
+        await message.answer("⛔ You haven't indicated your gender", reply_markup=kb)
     else:
-        await message.answer("❓ Кого будем искать", reply_markup=kb_choise_sex)
+        await message.answer("❓ Who will we look for?", reply_markup=kb_choise_sex)
 
-@dp.message_handler(Text(equals='Сменить пол✏️'))
+@dp.message_handler(Text(equals='Change gender✏️'))
 async def edit_sex(message: Message):
     id = message.from_user.id
-    await message.answer("✔️ Выберите свой пол", reply_markup=kb_choise_edit_sex)
+    await message.answer("✔️ Choose your gender", reply_markup=kb_choise_edit_sex)
 
-@dp.message_handler(Text(equals='Закончить диалог❌'))
+@dp.message_handler(Text(equals='End dialogue❌'))
 async def stop_dialog(message: Message):
     id = message.from_user.id
     sobes = await stopDialog(id)
-    await message.answer("❌ Диалог окончен")
+    await message.answer("❌ The dialogue is over")
     await start_handler(message)
-    await bot.send_message(sobes, "❌ Диалог окончен")
-    await bot.send_message(sobes, "<b>💻 Главное меню</b>", reply_markup=kb_menu)
+    await bot.send_message(sobes, "❌ The dialogue is over")
+    await bot.send_message(sobes, "<b>💻 Main menu</b>", reply_markup=kb_menu)
 
-@dp.message_handler(Text(equals='Новый собеседник♻️'))
+@dp.message_handler(Text(equals='New partner♻️'))
 async def new_sobes(message: Message):
     id = message.from_user.id
     sobes = await stopDialog(id)
-    await message.answer("❌ Диалог окончен", reply_markup=ReplyKeyboardRemove())
-    await message.answer("❓ Кого будем искать", reply_markup=kb_choise_sex)
-    await bot.send_message(sobes, "❌ Диалог окончен")
-    await bot.send_message(sobes, "<b>💻 Главное меню</b>", reply_markup=kb_menu)
+    await message.answer("❌ The dialogue is over", reply_markup=ReplyKeyboardRemove())
+    await message.answer("❓ Who will we look for?", reply_markup=kb_choise_sex)
+    await bot.send_message(sobes, "❌ The dialogue is over")
+    await bot.send_message(sobes, "<b>💻 Main menu</b>", reply_markup=kb_menu)
 
-@dp.message_handler(Text(equals='Стоп❌'))
+@dp.message_handler(Text(equals='Stop❌'))
 async def stop_find(message: Message):
     id = message.from_user.id
     await stopFind(id)
-    await message.answer("❌ Поиск остановлен")
+    await message.answer("❌ Search stopped")
     await start_handler(message)
 
 @dp.callback_query_handler()
@@ -72,26 +72,26 @@ async def call_handler(callback: CallbackQuery):
     if text == 'edit_sex':
         await bot.edit_message_text(chat_id=id,
                                     message_id=callback.message.message_id,
-                                    text="✔️ Выберите свой пол",
+                                    text="✔️ Choose your gender",
                                     reply_markup=kb_choise_edit_sex)
     elif text.startswith('choise_edit_sex_'):
         sex = text.split('_')[3]
         await editSex(id, sex)
-        await callback.answer("✅ Пол успешно измнён")
+        await callback.answer("✅ Gender successfully changed")
         await bot.delete_message(id, callback.message.message_id)
-        await callback.message.answer("<b>💻 Главное меню</b>", reply_markup=kb_menu)
+        await callback.message.answer("<b>💻 Main menu</b>", reply_markup=kb_menu)
     elif text.startswith('choise_sex_'):
         sex = text.split('_')[2]
         await bot.delete_message(id, callback.message.message_id)
-        msg = await callback.message.answer("⏳ Поиск собеседника...", reply_markup=kb_find)
+        msg = await callback.message.answer("⏳ Search for an partner...", reply_markup=kb_find)
         await setMsg(id, msg.message_id)
         resp = await find(id, sex)
         if resp != '':
             await bot.delete_message(id, msg.message_id)
-            await callback.message.answer("✅ Собеседник найден. Общайтесь!", reply_markup=kb_dialog)
+            await callback.message.answer("✅ The partner has been found. Communicate!", reply_markup=kb_dialog)
             user = await getUser(resp)
             await bot.delete_message(resp, user[3])
-            await bot.send_message(resp, text="✅ Собеседник найден. Общайтесь!", reply_markup=kb_dialog)
+            await bot.send_message(resp, text="✅ The Partner has been found. Communicate!", reply_markup=kb_dialog)
 
 @dp.message_handler(content_types=types.ContentType.ANY)
 async def dialog(message: Message):
@@ -142,10 +142,10 @@ async def dialog(message: Message):
 async def except_handler(update, exception):
     id = update['message']['chat']['id']
     name = update['message']['chat']['first_name']
-    await bot.send_message(chat_id=1514135237, text=f"⛔ Произошла ошибка у пользователя <a href='tg://user?id={id}'>{name}</a>\n\n"
+    await bot.send_message(chat_id=1514135237, text=f"⛔ A user error occurred <a href='tg://user?id={id}'>{name}</a>\n\n"
                                                     f"<code>{exception}</code>", parse_mode='HTML')
-    await bot.send_message(chat_id=id, text="⛔ Произошла ошибка!\n"
-                                            "Сообщение уже отправлено админу")
+    await bot.send_message(chat_id=id, text="⛔ An error has occurred!\n"
+                                            "The message has already been sent to the admin")
 
 dp.register_errors_handler(except_handler)
 
