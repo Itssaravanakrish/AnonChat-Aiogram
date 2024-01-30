@@ -1,2 +1,2 @@
-TOKEN = '@end_soft'
+TOKEN = '6318256885:AAFvBL_LqoPm0rXavgsegREqnwRxNCqTAvM'
 admin = 123
